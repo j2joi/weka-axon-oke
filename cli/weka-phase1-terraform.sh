@@ -23,7 +23,7 @@ phase1_terraform() {
 
   log_info "Running terraform apply"
 #  terraform apply -auto-approve -var "ol_managed_nodes=false" "${tf_vars[@]}"
-  terraform apply  -var-file="${SCRIPT_DIR}/../terraform/terraform.tfvars" -var "ol_managed_nodes=false" -auto-approve
+  terraform apply  -var-file="${SCRIPT_DIR}/../terraform/terraform.tfvars" -auto-approve
 
   log_info "Terraform apply complete."
   log_info "Cluster ID: $(terraform output -raw cluster_id)"
