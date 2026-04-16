@@ -3,6 +3,7 @@ weka-deploy.env
 
 # Local tool versions and env vars (may contain credentials)
 .mise.toml
+.idea
 
 # Generated manifests and kubeconfig
 deploy/
