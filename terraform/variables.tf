@@ -146,30 +146,3 @@ variable "instance_shape" {
   }
 }
 
-variable "worker_block_volumes" {
-  description = <<-EOT
-    When set, one block volume is created per managed worker node and attached
-    as a paravirtualized device. Only valid when the worker shape starts with
-    "VM.Standard". Set to null (default) to disable.
-
-    Attributes:
-      block_volume_size        — Size in GB (e.g. 200)
-      block_volume_vpus_per_gb — Performance tier: 0=Low, 10=Balanced, 20=High, 30-120=Ultra High
-      device_name              — OS device path (e.g. "/dev/oracleoci/oraclevdb")
-  EOT
-  type = object({
-    block_volume_size        = number
-    block_volume_vpus_per_gb = number
-    device_name              = string
-  })
-  default = null
-
-  validation {
-    condition = var.worker_block_volumes == null || (
-      var.worker_block_volumes.block_volume_size > 0 &&
-      var.worker_block_volumes.block_volume_vpus_per_gb >= 0 &&
-      var.worker_block_volumes.device_name != ""
-    )
-    error_message = "worker_block_volumes: block_volume_size must be > 0, block_volume_vpus_per_gb >= 0, and device_name must not be empty."
-  }
-}

@@ -143,27 +143,5 @@ locals {
     : true
   )
 
-  # ── Block volume locals ────────────────────────────────────────────────────
-  # Block volumes are only supported for VM.Standard shapes (not BM or DenseIO).
-  enable_block_volumes = (
-    var.worker_block_volumes != null &&
-    startswith(local.instance_shape, "VM.Standard")
-  )
-
-  # Guard: block volumes requested but shape is not VM.Standard
-  _validate_block_volume_shape = (
-    var.worker_block_volumes != null && !startswith(local.instance_shape, "VM.Standard")
-    ? tobool("ERROR: worker_block_volumes is only supported for VM.Standard shapes. Current shape: ${local.instance_shape}")
-    : true
-  )
-
-  # Key in the managed_nodes map — must match the pool name defined above.
-  managed_node_pool_name = "ol-8-10-OKE"
-
-  # Static pool size known at plan time — avoids unknown-count issues with for_each.
-  managed_node_pool_size = (
-    local.enable_block_volumes && var.ubuntu_managed_nodes
-    ? local.managed_nodes[local.managed_node_pool_name].size
-    : 0
-  )
+    
 }
