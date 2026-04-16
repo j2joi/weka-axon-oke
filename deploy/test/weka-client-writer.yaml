@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: weka-oke-app-writer
+#  namespace: default
+spec:
+  nodeSelector:
+    weka.io/supports-clients: "true"
+#  tolerations:
+#    - key: "weka.io/axon"
+#      operator: "Equal"
+#      value: "true"
+#      effect: "NoSchedule"
+  containers:
+    - name: test
+      image: busybox:1.37.0
+      resources:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits:
+          cpu: 100m
+          memory: 64Mi
+      command:
+        - sh
+        - -c
+        - |
+          echo "hello from WEKA CSI" > /data/hello.txt
+          ls -la /data
+          cat /data/hello.txt
+          sleep 3600
+      volumeMounts:
+        - name: weka-vol
+          mountPath: /data
+  volumes:
+    - name: weka-vol
+      persistentVolumeClaim:
+        claimName: pvc-wekafs-dir

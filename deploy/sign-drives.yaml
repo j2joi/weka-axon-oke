@@ -1,0 +1,16 @@
+apiVersion: weka.weka.io/v1alpha1
+kind: WekaPolicy
+metadata:
+  name: sign-all-drives-policy
+  namespace: weka-operator-system
+spec:
+  type: "sign-drives"
+  payload:
+    signDrivesPayload:
+      type: all-not-root
+      nodeSelector:
+        weka.io/supports-backends: "true"
+      options:
+        allowNonEmptyDevice: true
+        allowEraseNonWekaPartitions: true
+    interval: 5m

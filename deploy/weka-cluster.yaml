@@ -1,0 +1,25 @@
+apiVersion: weka.weka.io/v1alpha1
+kind: WekaCluster
+metadata:
+  name: cluster-dev
+  namespace: default
+spec:
+  template: dynamic
+  dynamicTemplate:
+    computeContainers: 6
+    driveContainers: 6
+    computeCores: 2
+    driveCores: 1
+#    driveCores: 2
+    numDrives: 1
+#    containerCapacity: 1000
+  image: quay.io/weka.io/weka-in-container:5.1.0.605
+  nodeSelector:
+    weka.io/supports-backends: "true"
+  driversDistService: https://drivers.weka.io
+  imagePullSecret: "quay-io-robot-secret"
+  ports:
+    basePort: 15000
+    portRange: 500
+  network:
+    udpMode: true

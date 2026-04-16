@@ -1,12 +1,13 @@
 # Local config with credentials — never commit
-weka-deploy.env
 
 # Local tool versions and env vars (may contain credentials)
 .mise.toml
 .idea
 
 # Generated manifests and kubeconfig
-deploy/
+deploy/env.sh
+deploy/kubeconfig
+deploy/ssh_config*
 
 Ignore .env file and .env directory
 .env
