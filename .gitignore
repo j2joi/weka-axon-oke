@@ -45,3 +45,7 @@ terraform/.terraform*
 
 # Ignore .venv
 **/.venv
+
+#Ignore .claude
+**/.claude
+CLAUDE.md

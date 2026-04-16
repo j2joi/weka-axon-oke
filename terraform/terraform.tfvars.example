@@ -2,19 +2,32 @@
 # Many of these values can be obtained from the ~/.oci/config file
 
 # Required
-tenancy_ocid         = "ocid1.tenancy.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-user_ocid            = "ocid1.user.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-compartment_ocid     = "ocid1.compartment.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-fingerprint          = "xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
-private_key_path     = "~/.oci/oci.pem"
-region               = "us-phoenix-1"
-kubernetes_version   = "v1.32.1"
-image_id             = "ocid1.image.oc1.phx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-ssh_public_key_path  = "~/.ssh/id_rsa.pub"
-ssh_private_key_path = "~/.ssh/id_rsa"
+tenancy_ocid     = "ocid1.tenancy.oc1"
+user_ocid        = "ocid1.user.oc1.."
+compartment_ocid = "ocid1.compartment."
+fingerprint      = "c9:92:ff:"
+private_key_path = ".pem"
+# region               = "us-ashburn-1"
+# region = "eu-frankfurt-1"
 
-# Optional
-public_nodes           = false
-architecture           = "amd64"
-add_managed_nodes      = false
-add_self_managed_nodes = false
+
+## OKE Configuration
+kubernetes_version   = "v1.33.1"
+ssh_public_key_path  = "ed25519.pub"
+public_nodes           = true
+#instance_shape         = "VM.DenseIO.E4.Flex"
+#instance_shape         = "BM.DenseIO.E4.128"
+ol_managed_nodes        = true
+worker_pool_size       = 7  #(min 6 + 1)
+cni_type       = "npn"
+
+#Ubuntu
+# image_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaack7qrrfuvvkgfwuvyhmklyvg42dq7blgbmf3fqma4xoa7ca6kdoq"
+# image_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa5w2jevf3nhfqn35kmwpdo7jh5wglzgonc6fjybpq3oj74k7hfhsa"
+# image_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaiagufguil5zpnuedelrqgbrbh6p5qofeg5kejqlksk5276mfut3a"
+#ubuntu_managed_nodes   = false  #
+#ubuntu_release         = "noble"
+
+
+# OKE
+#   - managed nodes  -- you manage, but provisioning is done by OKE Control Plane - Group by Node Pool
