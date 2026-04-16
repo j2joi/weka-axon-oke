@@ -22,12 +22,12 @@ worker_pool_size       = 7  #(min 6 + 1)
 cni_type       = "npn"
 
 #Ubuntu
-# image_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaack7qrrfuvvkgfwuvyhmklyvg42dq7blgbmf3fqma4xoa7ca6kdoq"
-# image_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa5w2jevf3nhfqn35kmwpdo7jh5wglzgonc6fjybpq3oj74k7hfhsa"
-# image_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaiagufguil5zpnuedelrqgbrbh6p5qofeg5kejqlksk5276mfut3a"
 #ubuntu_managed_nodes   = false  #
 #ubuntu_release         = "noble"
 
 
 # OKE
 #   - managed nodes  -- you manage, but provisioning is done by OKE Control Plane - Group by Node Pool
+# image_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaack7qrrfuvvkgfwuvyhmklyvg42dq7blgbmf3fqma4xoa7ca6kdoq"
+# image_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa5w2jevf3nhfqn35kmwpdo7jh5wglzgonc6fjybpq3oj74k7hfhsa"
+# image_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaiagufguil5zpnuedelrqgbrbh6p5qofeg5kejqlksk5276mfut3a"

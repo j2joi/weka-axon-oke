@@ -53,10 +53,8 @@ OCI access requires either an `~/.oci/config` file or explicit API credentials. 
 
 ```
 .
-├── weka-deploy.env         # Your credentials (gitignored, copy from example)
 ├── cli/
 │   ├── weka-lib.sh                       # Shared utilities and defaults
-│   ├── weka-deploy.env.example           # Credential template
 │   ├── weka-phase1-terraform.sh          # Phase  1 — OKE infrastructure
 │   ├── weka-phase2-kubeconfig.sh         # Phase  2 — kubeconfig extraction
 │   ├── weka-phase3-label-backends.sh     # Phase  3 — label backend nodes
@@ -87,45 +85,94 @@ OCI access requires either an `~/.oci/config` file or explicit API credentials. 
 
 ## Configuration
 
-Copy the example env file and fill in your values:
+### OCI CLI
+
+A working [OCI CLI](https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm)
+installation is required. The CLI is used by Phase 2 to authenticate against the OKE
+control plane and generate the kubeconfig. Verify it is configured correctly before
+starting:
 
 ```bash
-cp cli/weka-deploy.env.example weka-deploy.env
+oci iam region list   # should return a list of OCI regions without error
+```
+
+The CLI reads credentials from `~/.oci/config` by default. Set `OCI_CONFIG_PROFILE` if
+you use a non-`DEFAULT` profile.
+
+### terraform/terraform.tfvars
+
+Copy the example and fill in your values:
+
+```bash
+cp terraform/terraform.tfvars.example terraform/terraform.tfvars
 ```
 
 **Required variables:**
 
-```bash
-# OCI authentication — choose one:
-OCI_CONFIG_FILE="$HOME/.oci/config"   # Option A: OCI config file (recommended)
-OCI_CONFIG_PROFILE="DEFAULT"
+| Variable | Description |
+|---|---|
+| `tenancy_ocid` | OCI Tenancy OCID |
+| `user_ocid` | OCI User OCID |
+| `fingerprint` | API key fingerprint |
+| `private_key_path` | Path to the OCI API private key (`.pem`) |
+| `region` | OCI region (e.g. `eu-frankfurt-1`) |
+| `compartment_ocid` | Target compartment OCID |
+| `ssh_public_key_path` | SSH public key path for worker node access |
+| `worker_pool_size` | Number of worker nodes (minimum `7`) |
+| `instance_shape` | Worker node shape (see `variables.tf` for supported values) |
 
-# Option B: explicit credentials (only if not using OCI_CONFIG_FILE)
-# TENANCY_OCID="ocid1.tenancy.oc1.."
-# USER_OCID="ocid1.user.oc1.."
-# FINGERPRINT="xx:xx:xx:xx"
-# PRIVATE_KEY_PATH="$HOME/.oci/oci_api_key.pem"
-# REGION="us-ashburn-1"
+**Node image — choose one:**
 
-# Infrastructure
-COMPARTMENT_OCID="ocid1.compartment.oc1.."
-SSH_PUBLIC_KEY_PATH="$HOME/.ssh/id_rsa.pub"
-SSH_PRIVATE_KEY_PATH="$HOME/.ssh/id_rsa"
-IMAGE_ID="ocid1.image.oc1.."   # Ubuntu OKE worker image
+| Scenario | Variables to set |
+|---|---|
+| Oracle Linux (default) | `ol_managed_nodes = true` |
+| Ubuntu Noble | `ubuntu_managed_nodes = true`, `ubuntu_release = "noble"` |
+| Ubuntu Jammy | `ubuntu_managed_nodes = true`, `ubuntu_release = "jammy"` |
+| Custom image OCID | `image_id = "ocid1.image.oc1.."` |
 
-# WEKA registry (provided by WEKA support)
-QUAY_USERNAME="weka-robot+your_account"
-QUAY_PASSWORD="your_quay_password"
-```
+> **Note:** VM flex shapes are only compatible with Oracle Linux OKE images.
+> Bare metal shapes support both Oracle Linux and Ubuntu.
 
 **Optional overrides** (defaults shown):
 
-```bash
-WEKA_IMAGE="quay.io/weka.io/weka-in-container:5.1.0.605"
-WEKA_OPERATOR_VERSION="v1.11.0"
-DATA_NICS_NUMBER=2
-KUBECONFIG_FILE="./deploy/kubeconfig"
+```hcl
+kubernetes_version = "v1.33.1"
+cni_type           = "npn"      # "npn" or "flannel"
+public_nodes       = false
 ```
+
+### WEKA Credentials
+
+Contact the **WEKA Customer Success Team** to obtain the necessary setup information
+before starting the deployment. You will need:
+
+**Container repository (quay.io) — image pull secrets:**
+
+| Variable | Description |
+|---|---|
+| `QUAY_USERNAME` | quay.io robot account username (e.g. `weka.io+example_user`) |
+| `QUAY_PASSWORD` | quay.io robot account password |
+
+These are required by Phase 5 to create the `quay-io-robot-secret` image pull secret.
+Export them in your shell before running the scripts:
+
+```bash
+export QUAY_USERNAME="example_user"
+export QUAY_PASSWORD="example_password"
+```
+
+**WEKA operator and image versions:**
+
+For the most current versions refer to the
+[WEKA Operator page](https://get.weka.io/ui/operator).
+
+```bash
+WEKA_OPERATOR_VERSION="v1.11.0"
+WEKA_IMAGE="quay.io/weka.io/weka-in-container:5.1.0.605"
+```
+
+Gathering this information in advance provides all the required values to complete
+the deployment workflow efficiently.
 
 ---
 
@@ -134,10 +181,22 @@ KUBECONFIG_FILE="./deploy/kubeconfig"
 ### Phase 1 — OCI OKE Infrastructure
 
 Provisions the OKE cluster, VCN, subnets, gateways, and managed node pool via Terraform.
-Workspace defaults to `dev`. Override with `TF_WORKSPACE=<name>`.
+The Terraform code is built on the
+[Oracle OKE Terraform Module](https://registry.terraform.io/modules/oracle-terraform-modules/oke/oci/latest)
+(`oracle-terraform-modules/oke/oci` v5.4.2).
+
+Run via the phase script:
 
 ```bash
 cli/weka-phase1-terraform.sh
+```
+
+Or run Terraform directly:
+
+```bash
+cd terraform/
+terraform init
+terraform apply
 ```
 
 ---

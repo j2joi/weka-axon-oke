@@ -47,10 +47,48 @@ phase8_create_cluster() {
   kubectl_apply "${manifest}"
   [[ "${DRY_RUN}" == "true" ]] && return
 
-  log_info "WekaCluster applied. Current status:"
-  kubectl get wekacluster cluster-dev \
-    -n default \
-    --kubeconfig="${KUBECONFIG_FILE}" 2>/dev/null || true
+  log_info "WekaCluster applied. Waiting for cluster to become ready..."
+  wait_for_wekacluster "cluster-dev" "default"
+}
+
+wait_for_wekacluster() {
+  local name="$1"
+  local namespace="${2:-default}"
+  local timeout="${WEKACLUSTER_TIMEOUT:-1200}"
+  local interval=15
+  local elapsed=0
+
+  log_info "Polling WekaCluster '${name}' every ${interval}s (timeout: ${timeout}s)..."
+
+  while [[ ${elapsed} -lt ${timeout} ]]; do
+    local status
+    status=$(kubectl get wekacluster "${name}" \
+      -n "${namespace}" \
+      -o jsonpath='{.status.status}' \
+      --kubeconfig="${KUBECONFIG_FILE}" 2>/dev/null || echo "unknown")
+
+    log_info "[${elapsed}s] status=${status}"
+
+    case "${status}" in
+      Ready)
+        log_info "WekaCluster '${name}' is ready."
+        kubectl get wekacluster "${name}" -n "${namespace}" --kubeconfig="${KUBECONFIG_FILE}"
+        return 0
+        ;;
+      Error|Failed)
+        log_error "WekaCluster '${name}' entered error state: ${status}"
+        kubectl get wekacluster "${name}" -n "${namespace}" -o jsonpath='{.status.conditions}' --kubeconfig="${KUBECONFIG_FILE}" | python3 -m json.tool || true
+        return 1
+        ;;
+    esac
+
+    sleep "${interval}"
+    (( elapsed += interval )) || true
+  done
+
+  log_error "Timeout: WekaCluster '${name}' not ready after ${timeout}s."
+  kubectl get wekacluster "${name}" -n "${namespace}" --kubeconfig="${KUBECONFIG_FILE}" || true
+  return 1
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then

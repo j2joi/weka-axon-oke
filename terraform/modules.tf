@@ -78,10 +78,10 @@ module "oke" {
     "Allow SSH ingress to workers from my public IP" = {
       protocol = 6, port = 22, source = "${trimspace(data.http.my_public_ip.response_body)}/32", source_type = "CIDR_BLOCK"
     }
-    "Allow TCP 14000 ingress to workers from admin/bastion CIDR (WEKA GUI)" = {
+    "Allow TCP 15000 ingress to workers from admin/bastion CIDR (WEKA GUI)" = {
       protocol = 6, port = 15000, source = "${trimspace(data.http.my_public_ip.response_body)}/32", source_type = "CIDR_BLOCK"
     }
-    "Allow UDP 14000 ingress to workers from admin/bastion CIDR (WEKA GUI)" = {
+    "Allow UDP 15000 ingress to workers from admin/bastion CIDR (WEKA GUI)" = {
       protocol = 17, port = 15000, source = "${trimspace(data.http.my_public_ip.response_body)}/32", source_type = "CIDR_BLOCK"
     }
     "Allow TCP 14000 ingress to workers from admin/bastion CIDR (WEKA GUI)" = {
@@ -94,10 +94,10 @@ module "oke" {
 
   # npn CNI: pods have their own NSG — mirror the WEKA GUI rule so pods are reachable too
   allow_rules_pods = {
-    "Allow TCP 14000 ingress to pods from admin/bastion CIDR (WEKA GUI)" = {
+    "Allow TCP 15000 ingress to pods from admin/bastion CIDR (WEKA GUI)" = {
       protocol = 6, port = 15000, source = "${trimspace(data.http.my_public_ip.response_body)}/32", source_type = "CIDR_BLOCK"
     }
-    "Allow UDP 14000 ingress to pods from admin/bastion CIDR (WEKA GUI)" = {
+    "Allow UDP 15000 ingress to pods from admin/bastion CIDR (WEKA GUI)" = {
       protocol = 17, port = 15000, source = "${trimspace(data.http.my_public_ip.response_body)}/32", source_type = "CIDR_BLOCK"
     }
     "Allow TCP 14000 ingress to pods from admin/bastion CIDR (WEKA GUI)" = {

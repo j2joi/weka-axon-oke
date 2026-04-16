@@ -8,9 +8,7 @@ LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${LIB_DIR}/.." && pwd)"
 TF_DIR="${PROJECT_ROOT}/terraform"
 DEPLOY_DIR="${PROJECT_ROOT}/deploy"
-CONFIG_FILE="${PROJECT_ROOT}/weka-deploy.env"
-
-# ── Defaults (overridable via weka-deploy.env or environment) ──────────────────
+# ── Defaults (overridable via environment variables) ──────────────────────────
 : "${WEKA_IMAGE:=quay.io/weka.io/weka-in-container:5.1.0.605}"
 : "${WEKA_OPERATOR_VERSION:=v1.11.0}"
 : "${DATA_NICS_NUMBER:=2}"
@@ -35,11 +33,12 @@ log_phase() {
 
 # ── Configuration loading ──────────────────────────────────────────────────────
 load_config() {
-  if [[ -f "${CONFIG_FILE}" ]]; then
-    log_info "Loading config from ${CONFIG_FILE}"
-    # shellcheck source=/dev/null
-    set -a; source "${CONFIG_FILE}"; set +a
-  fi
+  log_info "Loading config"
+#  if [[ -f "${CONFIG_FILE}" ]]; then
+#    log_info "Loading config from ${CONFIG_FILE}"
+#    # shellcheck source=/dev/null
+#    set -a; source "${CONFIG_FILE}"; set +a
+#  fi
 }
 
 # ── Prerequisite check ─────────────────────────────────────────────────────────
@@ -117,7 +116,7 @@ validate_vars() {
         fi
       done
     fi
-    for var in COMPARTMENT_OCID SSH_PUBLIC_KEY_PATH SSH_PRIVATE_KEY_PATH IMAGE_ID; do
+    for var in COMPARTMENT_OCID SSH_PUBLIC_KEY_PATH; do
       if [[ -z "${!var:-}" ]]; then
         log_error "Required variable not set: ${var}"
         (( errors++ )) || true
@@ -132,13 +131,6 @@ validate_vars() {
         (( errors++ )) || true
       fi
     done
-  fi
-
-  if needs_phase 11; then
-    if ! [[ "${DATA_NICS_NUMBER}" =~ ^[0-9]+$ ]]; then
-      log_error "DATA_NICS_NUMBER must be a positive integer, got: '${DATA_NICS_NUMBER}'"
-      (( errors++ )) || true
-    fi
   fi
 
 #  if needs_phase 9; then
@@ -156,7 +148,7 @@ validate_vars() {
 
   if [[ ${errors} -gt 0 ]]; then
     log_error "Fix the ${errors} missing/invalid variable(s) above and retry."
-    log_error "Copy weka-deploy.env.example to weka-deploy.env and fill in values."
+    log_error "Export the required variables in your shell before running the script."
     exit 1
   fi
 }

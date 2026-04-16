@@ -19,29 +19,11 @@ phase1_terraform() {
   log_info "Running terraform init"
   terraform init
 
-  local tf_vars=(
-    -var "compartment_ocid=${COMPARTMENT_OCID}"
-    -var "ssh_public_key_path=${SSH_PUBLIC_KEY_PATH}"
-    -var "ssh_private_key_path=${SSH_PRIVATE_KEY_PATH}"
-    -var "image_id=${IMAGE_ID}"
-    -var "add_managed_nodes=true"
-  )
-
-  if [[ -z "${OCI_CONFIG_FILE:-}" ]]; then
-    tf_vars+=(
-      -var "tenancy_ocid=${TENANCY_OCID}"
-      -var "user_ocid=${USER_OCID}"
-      -var "fingerprint=${FINGERPRINT}"
-      -var "private_key_path=${PRIVATE_KEY_PATH}"
-      -var "region=${REGION}"
-    )
-  else
-    log_info "OCI_CONFIG_FILE is set — provider will read credentials from: ${OCI_CONFIG_FILE}"
-    export OCI_CONFIG_FILE="${OCI_CONFIG_FILE/#\~/$HOME}"
-  fi
+  terraform plan -var-file="${SCRIPT_DIR}/../terraform/terraform.tfvars"
 
   log_info "Running terraform apply"
-  terraform apply -auto-approve "${tf_vars[@]}"
+#  terraform apply -auto-approve -var "ol_managed_nodes=false" "${tf_vars[@]}"
+  terraform apply  -var-file="${SCRIPT_DIR}/../terraform/terraform.tfvars" -var "ol_managed_nodes=false" -auto-approve
 
   log_info "Terraform apply complete."
   log_info "Cluster ID: $(terraform output -raw cluster_id)"
@@ -51,9 +33,9 @@ phase1_terraform() {
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   trap 'log_error "Script failed at line ${LINENO}. Exit code: $?"' ERR
-  load_config
-  check_prerequisites
-  PHASES_TO_RUN=(1)
-  validate_vars
+#  load_config
+#  check_prerequisites
+#  PHASES_TO_RUN=(1)
+#  validate_vars
   phase1_terraform
 fi

@@ -27,11 +27,6 @@ terraform {
       version = ">= 3.2.1"
     }
 
-    # oci = {
-    #   configuration_aliases = [oci.home]
-    #   source                = "oracle/oci"
-    #   version               = ">= 6.37.0"
-    # }
     oci = {
       configuration_aliases = [oci.home]
       source                = "oracle/oci"
@@ -55,7 +50,16 @@ terraform {
   }
 }
 
-# Configure provider from variables passed through terraform.tfvars
+# Default provider — used by root-module data sources and resources
+provider "oci" {
+  tenancy_ocid     = var.tenancy_ocid
+  user_ocid        = var.user_ocid
+  fingerprint      = var.fingerprint
+  private_key_path = var.private_key_path
+  region           = var.region
+}
+
+# Aliased provider — passed explicitly to the OKE module (oci.home)
 provider "oci" {
   alias            = "home"
   tenancy_ocid     = var.tenancy_ocid
