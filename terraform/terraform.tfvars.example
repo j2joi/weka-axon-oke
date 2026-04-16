@@ -1,0 +1,20 @@
+# Required variables to create an OKE cluster
+# Many of these values can be obtained from the ~/.oci/config file
+
+# Required
+tenancy_ocid         = "ocid1.tenancy.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+user_ocid            = "ocid1.user.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+compartment_ocid     = "ocid1.compartment.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+fingerprint          = "xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
+private_key_path     = "~/.oci/oci.pem"
+region               = "us-phoenix-1"
+kubernetes_version   = "v1.32.1"
+image_id             = "ocid1.image.oc1.phx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+ssh_public_key_path  = "~/.ssh/id_rsa.pub"
+ssh_private_key_path = "~/.ssh/id_rsa"
+
+# Optional
+public_nodes           = false
+architecture           = "amd64"
+add_managed_nodes      = false
+add_self_managed_nodes = false

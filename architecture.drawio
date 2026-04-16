@@ -1,0 +1,533 @@
+<mxfile host="app.diagrams.net" modified="2026-04-15T00:00:00.000Z" agent="Claude Code" version="24.0.0" type="device">
+  <diagram id="weka-oke-architecture" name="WEKA Axon on OKE">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2339" pageHeight="1654" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ═══════════════════════════════════════════════════════════
+             LAYER 1: OCI Infrastructure Containers
+             ═══════════════════════════════════════════════════════════ -->
+
+        <!-- OCI Tenancy -->
+        <mxCell id="10" value="&lt;b&gt;OCI Tenancy&lt;/b&gt;"
+          style="rounded=1;arcSize=2;fillColor=#EBF5FB;strokeColor=#1A5276;strokeWidth=3;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=12;"
+          vertex="1" parent="1">
+          <mxGeometry x="10" y="10" width="2230" height="1590" as="geometry" />
+        </mxCell>
+
+        <!-- Tenancy Icon -->
+        <mxCell id="10i" value=""
+          style="shape=mxgraph.oracle.cloud.tenancy;fillColor=#1A5276;strokeColor=#1A5276;fontSize=10;"
+          vertex="1" parent="1">
+          <mxGeometry x="2185" y="15" width="40" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Compartment -->
+        <mxCell id="11" value="&lt;b&gt;Compartment&lt;/b&gt;"
+          style="rounded=1;arcSize=2;fillColor=#EAFAF1;strokeColor=#1E8449;strokeWidth=2;fontSize=12;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=12;dashed=1;dashPattern=8 6;"
+          vertex="1" parent="1">
+          <mxGeometry x="30" y="60" width="2190" height="1530" as="geometry" />
+        </mxCell>
+
+        <!-- VCN -->
+        <mxCell id="12" value="&lt;b&gt;VCN  10.0.0.0/16&lt;/b&gt;"
+          style="rounded=1;arcSize=2;fillColor=#FEF9E7;strokeColor=#D68910;strokeWidth=2;fontSize=12;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=12;"
+          vertex="1" parent="1">
+          <mxGeometry x="50" y="110" width="2150" height="1470" as="geometry" />
+        </mxCell>
+
+        <!-- VCN Icon -->
+        <mxCell id="12i" value=""
+          style="shape=mxgraph.oracle.cloud.virtual_cloud_network;fillColor=#D68910;strokeColor=#D68910;"
+          vertex="1" parent="1">
+          <mxGeometry x="2155" y="118" width="32" height="32" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             LAYER 2: Networking Row
+             ═══════════════════════════════════════════════════════════ -->
+
+        <!-- Internet (external) -->
+        <mxCell id="20" value="Internet"
+          style="shape=mxgraph.cisco.sites.generic_cloud;fillColor=#AED6F1;strokeColor=#2471A3;fontSize=11;fontStyle=1;verticalLabelPosition=bottom;verticalAlign=top;labelPosition=center;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="80" y="150" width="100" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Internet Gateway -->
+        <mxCell id="21" value="Internet&#xa;Gateway"
+          style="shape=mxgraph.oracle.cloud.internet_gateway;fillColor=#2E86C1;strokeColor=#1A5276;fontSize=10;fontStyle=1;verticalLabelPosition=bottom;verticalAlign=top;labelPosition=center;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="230" y="155" width="70" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- NAT Gateway -->
+        <mxCell id="22" value="NAT&#xa;Gateway"
+          style="shape=mxgraph.oracle.cloud.nat_gateway;fillColor=#2E86C1;strokeColor=#1A5276;fontSize=10;fontStyle=1;verticalLabelPosition=bottom;verticalAlign=top;labelPosition=center;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="360" y="155" width="70" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Public Subnet badge -->
+        <mxCell id="23" value="Public Subnet&#xa;10.0.0.0/24"
+          style="rounded=1;fillColor=#D6EAF8;strokeColor=#2E86C1;fontSize=10;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="490" y="155" width="180" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Worker (Private) Subnet badge -->
+        <mxCell id="24" value="Worker Subnet (Private)&#xa;10.0.1.0/24"
+          style="rounded=1;fillColor=#D6EAF8;strokeColor=#2E86C1;fontSize=10;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="690" y="155" width="210" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Load Balancer -->
+        <mxCell id="25" value="Load Balancer"
+          style="shape=mxgraph.oracle.cloud.load_balancer_a;fillColor=#2E86C1;strokeColor=#1A5276;fontSize=10;fontStyle=1;verticalLabelPosition=bottom;verticalAlign=top;labelPosition=center;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="960" y="155" width="70" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Edges: Internet ↔ IGW -->
+        <mxCell id="e20" value="" style="endArrow=block;endFill=1;startArrow=block;startFill=1;edgeStyle=orthogonalEdgeStyle;strokeColor=#2471A3;strokeWidth=2;" edge="1" parent="1" source="20" target="21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Edge: IGW → Public Subnet -->
+        <mxCell id="e21" value="" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;strokeColor=#2E86C1;" edge="1" parent="1" source="21" target="23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Edge: NAT GW → Public Subnet -->
+        <mxCell id="e22" value="" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;strokeColor=#2E86C1;" edge="1" parent="1" source="22" target="23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Edge: LB exposed via IGW -->
+        <mxCell id="e25" value="https://:15000/ui" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;strokeColor=#E74C3C;fontSize=9;fontColor=#E74C3C;dashed=1;" edge="1" parent="1" source="21" target="25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             LAYER 3: OKE Enhanced Cluster
+             ═══════════════════════════════════════════════════════════ -->
+
+        <!-- OKE Cluster outer box -->
+        <mxCell id="30" value="&lt;b&gt;OKE Enhanced Cluster&lt;/b&gt;"
+          style="rounded=1;arcSize=2;fillColor=#FDFEFE;strokeColor=#E67E22;strokeWidth=3;fontSize=13;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=40;"
+          vertex="1" parent="1">
+          <mxGeometry x="70" y="260" width="2120" height="1300" as="geometry" />
+        </mxCell>
+
+        <!-- OKE icon -->
+        <mxCell id="30i" value=""
+          style="shape=mxgraph.oracle.cloud.container_engine_for_kubernetes;fillColor=#E67E22;strokeColor=#E67E22;"
+          vertex="1" parent="1">
+          <mxGeometry x="75" y="265" width="34" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- Managed Control Plane -->
+        <mxCell id="32" value="Managed Control Plane (OCI-managed, k8s v1.32)"
+          style="rounded=1;fillColor=#D6EAF8;strokeColor=#2980B9;fontSize=11;fontStyle=1;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="90" y="320" width="700" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- WEKA Operator note next to control plane -->
+        <mxCell id="33" value="kubectl / helm entry point"
+          style="rounded=1;fillColor=#F8F9FA;strokeColor=#AEB6BF;fontSize=10;align=center;dashed=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="820" y="320" width="220" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             LAYER 4: Backend Node Pool
+             ═══════════════════════════════════════════════════════════ -->
+
+        <!-- Backend Node Pool area -->
+        <mxCell id="40" value="&lt;b&gt;Backend Node Pool&lt;/b&gt;  (label: weka.io/supports-backends=true)"
+          style="rounded=1;arcSize=3;fillColor=#FDEDEC;strokeColor=#E74C3C;strokeWidth=2;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=10;dashed=1;dashPattern=8 5;"
+          vertex="1" parent="1">
+          <mxGeometry x="90" y="410" width="1080" height="580" as="geometry" />
+        </mxCell>
+
+        <!-- Backend Node 1 -->
+        <mxCell id="41" value="&lt;b&gt;Backend Node 1&lt;/b&gt;&#xa;BM.DenseIO.E5.128"
+          style="rounded=1;fillColor=#FDECEA;strokeColor=#C0392B;fontSize=10;fontStyle=1;verticalAlign=top;spacingTop=6;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="110" y="470" width="300" height="490" as="geometry" />
+        </mxCell>
+        <mxCell id="41a" value="Drive Container 1&#xa;(weka-drive)" style="rounded=1;fillColor=#F5B7B1;strokeColor=#E74C3C;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="120" y="520" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="41b" value="Drive Container 2&#xa;(weka-drive)" style="rounded=1;fillColor=#F5B7B1;strokeColor=#E74C3C;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="120" y="565" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="41c" value="Drive Container 3&#xa;(weka-drive)" style="rounded=1;fillColor=#F5B7B1;strokeColor=#E74C3C;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="120" y="610" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="41d" value="Compute Container 1&#xa;(weka-compute)" style="rounded=1;fillColor=#FADBD8;strokeColor=#C0392B;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="120" y="655" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="41e" value="Compute Container 2&#xa;(weka-compute)" style="rounded=1;fillColor=#FADBD8;strokeColor=#C0392B;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="120" y="700" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="41f" value="" style="shape=mxgraph.oracle.cloud.block_storage;fillColor=#C0392B;strokeColor=#922B21;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="120" y="750" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="41g" value="NVMe SSD (numDrives=1)" style="text;html=1;align=left;verticalAlign=middle;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="158" y="754" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="41h" value="weka-in-container:5.1.0.605" style="text;html=1;align=center;verticalAlign=middle;fontSize=8;fontColor=#922B21;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="120" y="790" width="280" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- Backend Node 2 -->
+        <mxCell id="50" value="&lt;b&gt;Backend Node 2&lt;/b&gt;&#xa;BM.DenseIO.E5.128"
+          style="rounded=1;fillColor=#FDECEA;strokeColor=#C0392B;fontSize=10;fontStyle=1;verticalAlign=top;spacingTop=6;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="430" y="470" width="300" height="490" as="geometry" />
+        </mxCell>
+        <mxCell id="50a" value="Drive Container 1&#xa;(weka-drive)" style="rounded=1;fillColor=#F5B7B1;strokeColor=#E74C3C;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="440" y="520" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="50b" value="Drive Container 2&#xa;(weka-drive)" style="rounded=1;fillColor=#F5B7B1;strokeColor=#E74C3C;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="440" y="565" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="50c" value="Drive Container 3&#xa;(weka-drive)" style="rounded=1;fillColor=#F5B7B1;strokeColor=#E74C3C;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="440" y="610" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="50d" value="Compute Container 1&#xa;(weka-compute)" style="rounded=1;fillColor=#FADBD8;strokeColor=#C0392B;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="440" y="655" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="50e" value="Compute Container 2&#xa;(weka-compute)" style="rounded=1;fillColor=#FADBD8;strokeColor=#C0392B;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="440" y="700" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="50f" value="" style="shape=mxgraph.oracle.cloud.block_storage;fillColor=#C0392B;strokeColor=#922B21;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="440" y="750" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="50g" value="NVMe SSD (numDrives=1)" style="text;html=1;align=left;verticalAlign=middle;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="478" y="754" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="50h" value="weka-in-container:5.1.0.605" style="text;html=1;align=center;verticalAlign=middle;fontSize=8;fontColor=#922B21;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="440" y="790" width="280" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- Backend Node 3 -->
+        <mxCell id="60" value="&lt;b&gt;Backend Node 3&lt;/b&gt;&#xa;BM.DenseIO.E5.128"
+          style="rounded=1;fillColor=#FDECEA;strokeColor=#C0392B;fontSize=10;fontStyle=1;verticalAlign=top;spacingTop=6;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="750" y="470" width="300" height="490" as="geometry" />
+        </mxCell>
+        <mxCell id="60a" value="Drive Container 1&#xa;(weka-drive)" style="rounded=1;fillColor=#F5B7B1;strokeColor=#E74C3C;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="760" y="520" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="60b" value="Drive Container 2&#xa;(weka-drive)" style="rounded=1;fillColor=#F5B7B1;strokeColor=#E74C3C;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="760" y="565" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="60c" value="Drive Container 3&#xa;(weka-drive)" style="rounded=1;fillColor=#F5B7B1;strokeColor=#E74C3C;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="760" y="610" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="60d" value="Compute Container 1&#xa;(weka-compute)" style="rounded=1;fillColor=#FADBD8;strokeColor=#C0392B;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="760" y="655" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="60e" value="Compute Container 2&#xa;(weka-compute)" style="rounded=1;fillColor=#FADBD8;strokeColor=#C0392B;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="760" y="700" width="280" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="60f" value="" style="shape=mxgraph.oracle.cloud.block_storage;fillColor=#C0392B;strokeColor=#922B21;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="760" y="750" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="60g" value="NVMe SSD (numDrives=1)" style="text;html=1;align=left;verticalAlign=middle;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="798" y="754" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="60h" value="weka-in-container:5.1.0.605" style="text;html=1;align=center;verticalAlign=middle;fontSize=8;fontColor=#922B21;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="760" y="790" width="280" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- WekaCluster label spanning backends -->
+        <mxCell id="40L" value="WekaCluster CR: cluster-dev  (Axon — UDP mode, 6 drive + 6 compute containers per node)"
+          style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=3;fontColor=#922B21;"
+          vertex="1" parent="1">
+          <mxGeometry x="110" y="830" width="1040" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             LAYER 5: Client Node Pool
+             ═══════════════════════════════════════════════════════════ -->
+
+        <!-- Client Node Pool area -->
+        <mxCell id="70" value="&lt;b&gt;Client Node Pool&lt;/b&gt;  (label: weka.io/supports-clients=true)"
+          style="rounded=1;arcSize=3;fillColor=#EAF4FB;strokeColor=#2980B9;strokeWidth=2;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=10;dashed=1;dashPattern=8 5;"
+          vertex="1" parent="1">
+          <mxGeometry x="1190" y="410" width="560" height="580" as="geometry" />
+        </mxCell>
+
+        <!-- Client Node 1 -->
+        <mxCell id="71" value="&lt;b&gt;Client Node 1&lt;/b&gt;&#xa;VM.Standard.E5.Flex"
+          style="rounded=1;fillColor=#D6EAF8;strokeColor=#2471A3;fontSize=10;fontStyle=1;verticalAlign=top;spacingTop=6;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="1210" y="470" width="240" height="490" as="geometry" />
+        </mxCell>
+        <mxCell id="71a" value="WekaClient Pod&#xa;(weka-client)" style="rounded=1;fillColor=#AED6F1;strokeColor=#2471A3;fontSize=9;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="520" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="71b" value="wekafs mount&#xa;/mnt/weka (UDP)" style="rounded=1;fillColor=#D6EAF8;strokeColor=#2980B9;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="585" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="71c" value="App Pods&#xa;(workloads via CSI)" style="rounded=1;fillColor=#EBF5FB;strokeColor=#3498DB;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="645" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="71d" value="weka-in-container:5.1.0.605" style="text;html=1;align=center;verticalAlign=middle;fontSize=8;fontColor=#2471A3;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="1220" y="790" width="220" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- Client Node 2 -->
+        <mxCell id="80" value="&lt;b&gt;Client Node 2&lt;/b&gt;&#xa;VM.Standard.E5.Flex"
+          style="rounded=1;fillColor=#D6EAF8;strokeColor=#2471A3;fontSize=10;fontStyle=1;verticalAlign=top;spacingTop=6;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="1470" y="470" width="240" height="490" as="geometry" />
+        </mxCell>
+        <mxCell id="80a" value="WekaClient Pod&#xa;(weka-client)" style="rounded=1;fillColor=#AED6F1;strokeColor=#2471A3;fontSize=9;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="520" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="80b" value="wekafs mount&#xa;/mnt/weka (UDP)" style="rounded=1;fillColor=#D6EAF8;strokeColor=#2980B9;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="585" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="80c" value="App Pods&#xa;(workloads via CSI)" style="rounded=1;fillColor=#EBF5FB;strokeColor=#3498DB;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="645" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="80d" value="weka-in-container:5.1.0.605" style="text;html=1;align=center;verticalAlign=middle;fontSize=8;fontColor=#2471A3;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="790" width="220" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- WekaClient label -->
+        <mxCell id="70L" value="WekaClient CR: cluster-clients  (UDP mode, portRange: 46000)"
+          style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontStyle=3;fontColor=#2471A3;"
+          vertex="1" parent="1">
+          <mxGeometry x="1210" y="830" width="510" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             LAYER 6: weka-operator-system Namespace
+             ═══════════════════════════════════════════════════════════ -->
+
+        <!-- Namespace box -->
+        <mxCell id="90" value="&lt;b&gt;Namespace: weka-operator-system&lt;/b&gt;"
+          style="rounded=1;arcSize=3;fillColor=#F4ECF7;strokeColor=#7D3C98;strokeWidth=2;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=10;dashed=1;dashPattern=8 5;"
+          vertex="1" parent="1">
+          <mxGeometry x="1780" y="410" width="380" height="580" as="geometry" />
+        </mxCell>
+
+        <!-- Operator deployment -->
+        <mxCell id="91" value="&lt;b&gt;weka-operator-controller-manager&lt;/b&gt;&#xa;Deployment (Helm: v1.11.0)"
+          style="rounded=1;fillColor=#E8DAEF;strokeColor=#7D3C98;fontSize=10;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="1800" y="470" width="340" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- CSI section -->
+        <mxCell id="92" value="&lt;b&gt;csi-wekafs  (CSI Plugin)&lt;/b&gt;&#xa;Installed via csi.installationEnabled=true"
+          style="rounded=1;fillColor=#E8DAEF;strokeColor=#7D3C98;fontSize=10;align=center;fontStyle=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="1800" y="550" width="340" height="65" as="geometry" />
+        </mxCell>
+
+        <mxCell id="93" value="CSI Node&#xa;DaemonSet" style="rounded=1;fillColor=#D7BDE2;strokeColor=#7D3C98;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="630" width="155" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="94" value="CSI Controller&#xa;StatefulSet" style="rounded=1;fillColor=#D7BDE2;strokeColor=#7D3C98;fontSize=9;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1965" y="630" width="155" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Pull secret -->
+        <mxCell id="95" value="Secret: quay-io-robot-secret&#xa;(imagePullSecret for quay.io/weka.io)"
+          style="rounded=1;fillColor=#D7BDE2;strokeColor=#7D3C98;fontSize=9;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="1800" y="696" width="340" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- WekaPolicy -->
+        <mxCell id="96" value="WekaPolicy: sign-all-drives-policy&#xa;(type: sign-drives, all-not-root)"
+          style="rounded=1;fillColor=#D7BDE2;strokeColor=#7D3C98;fontSize=9;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="1800" y="762" width="340" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- CRDs -->
+        <mxCell id="97" value="CRDs: WekaCluster · WekaClient · WekaPolicy&#xa;WekaContainer · WekaFilesystem · WekaUser …"
+          style="rounded=1;fillColor=#D7BDE2;strokeColor=#7D3C98;fontSize=9;align=center;"
+          vertex="1" parent="1">
+          <mxGeometry x="1800" y="828" width="340" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             LAYER 7: default Namespace — Kubernetes Resources
+             ═══════════════════════════════════════════════════════════ -->
+
+        <!-- Default namespace box -->
+        <mxCell id="100" value="&lt;b&gt;Namespace: default&lt;/b&gt;  —  Kubernetes Custom Resources &amp; Storage"
+          style="rounded=1;arcSize=2;fillColor=#EAFAF1;strokeColor=#1E8449;strokeWidth=2;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=10;dashed=1;dashPattern=8 5;"
+          vertex="1" parent="1">
+          <mxGeometry x="90" y="1020" width="1660" height="520" as="geometry" />
+        </mxCell>
+
+        <!-- WekaCluster CR -->
+        <mxCell id="101" value="&lt;b&gt;WekaCluster CR&lt;/b&gt;&#xa;name: cluster-dev&#xa;template: dynamic&#xa;driveContainers: 6 / computeContainers: 6&#xa;network.udpMode: true&#xa;ports.basePort: 15000"
+          style="rounded=1;fillColor=#A9DFBF;strokeColor=#1E8449;fontSize=10;fontStyle=0;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="110" y="1075" width="270" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- WekaClient CR -->
+        <mxCell id="102" value="&lt;b&gt;WekaClient CR&lt;/b&gt;&#xa;name: cluster-clients&#xa;targetCluster: cluster-dev&#xa;nodeSelector: supports-clients&#xa;portRange.basePort: 46000"
+          style="rounded=1;fillColor=#A9DFBF;strokeColor=#1E8449;fontSize=10;fontStyle=0;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="400" y="1075" width="270" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- StorageClass -->
+        <mxCell id="103" value="&lt;b&gt;StorageClass&lt;/b&gt;&#xa;wekafs&#xa;provisioner: csi.weka.io&#xa;volumeBindingMode: Immediate"
+          style="rounded=1;fillColor=#A9DFBF;strokeColor=#1E8449;fontSize=10;fontStyle=0;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="690" y="1075" width="230" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- PVC -->
+        <mxCell id="104" value="&lt;b&gt;PVC&lt;/b&gt;&#xa;pvc-wekafs-dir&#xa;storageClass: wekafs&#xa;accessMode: ReadWriteMany&#xa;status: Bound"
+          style="rounded=1;fillColor=#A9DFBF;strokeColor=#1E8449;fontSize=10;fontStyle=0;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="940" y="1075" width="230" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Writer Pod -->
+        <mxCell id="105" value="&lt;b&gt;Pod: weka-oke-app-writer&lt;/b&gt;&#xa;Writes timestamp data&#xa;to PVC every 5s&#xa;volumeMount: /data"
+          style="rounded=1;fillColor=#ABEBC6;strokeColor=#1E8449;fontSize=10;fontStyle=0;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="1190" y="1075" width="240" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Reader Pod -->
+        <mxCell id="106" value="&lt;b&gt;Pod: weka-axon-app-reader&lt;/b&gt;&#xa;Reads data written&#xa;by writer pod&#xa;volumeMount: /data"
+          style="rounded=1;fillColor=#ABEBC6;strokeColor=#1E8449;fontSize=10;fontStyle=0;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;"
+          vertex="1" parent="1">
+          <mxGeometry x="1450" y="1075" width="240" height="140" as="geometry" />
+        </mxCell>
+
+        <!-- Phase labels strip -->
+        <mxCell id="100P" value="Phase 8  ──────────────────  Phase 9  ─────────────────────  Phase 14 (StorageClass → PVC → writer → reader)"
+          style="text;html=1;align=left;verticalAlign=middle;fontSize=9;fontColor=#566573;"
+          vertex="1" parent="1">
+          <mxGeometry x="110" y="1240" width="1580" height="24" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             EDGES: Control flow and relationships
+             ═══════════════════════════════════════════════════════════ -->
+
+        <!-- Operator reconciles WekaCluster CR -->
+        <mxCell id="e91" value="reconciles" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#7D3C98;fontColor=#7D3C98;fontSize=9;" edge="1" parent="1" source="91" target="101">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1970" y="1040" />
+              <mxPoint x="245" y="1040" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Operator reconciles WekaClient CR -->
+        <mxCell id="e92" value="" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#7D3C98;" edge="1" parent="1" source="91" target="102">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1970" y="1050" />
+              <mxPoint x="535" y="1050" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- WekaCluster CR manages backend pool -->
+        <mxCell id="e101" value="deploys to" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#1E8449;fontColor=#1E8449;fontSize=9;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="101" target="40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- WekaClient CR manages client pool -->
+        <mxCell id="e102" value="deploys to" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#1E8449;fontColor=#1E8449;fontSize=9;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="102" target="70">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- StorageClass bound to PVC -->
+        <mxCell id="e103" value="provisions" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;strokeColor=#1E8449;fontColor=#1E8449;fontSize=9;" edge="1" parent="1" source="103" target="104">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Writer mounts PVC -->
+        <mxCell id="e104" value="mounts (RWX)" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;strokeColor=#1E8449;fontColor=#1E8449;fontSize=9;" edge="1" parent="1" source="105" target="104">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Reader mounts PVC -->
+        <mxCell id="e105" value="mounts (RWX)" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;strokeColor=#1E8449;fontColor=#1E8449;fontSize=9;" edge="1" parent="1" source="106" target="104">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- CSI provisions StorageClass -->
+        <mxCell id="e92b" value="provides" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;dashed=1;strokeColor=#7D3C98;fontColor=#7D3C98;fontSize=9;" edge="1" parent="1" source="92" target="103">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1970" y="1060" />
+              <mxPoint x="805" y="1060" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- LB → WekaCluster backends (WEKA UI) -->
+        <mxCell id="e25b" value="WEKA UI :15000" style="endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;strokeColor=#E74C3C;fontColor=#E74C3C;fontSize=9;dashed=1;" edge="1" parent="1" source="25" target="40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Backends ↔ Clients (WEKA data path) -->
+        <mxCell id="e40" value="WEKA data path (UDP)" style="endArrow=block;endFill=0;startArrow=block;startFill=0;edgeStyle=orthogonalEdgeStyle;strokeColor=#E67E22;fontColor=#E67E22;fontSize=9;strokeWidth=2;" edge="1" parent="1" source="40" target="70">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             LEGEND
+             ═══════════════════════════════════════════════════════════ -->
+
+        <mxCell id="L0" value="&lt;b&gt;Legend&lt;/b&gt;"
+          style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;"
+          vertex="1" parent="1">
+          <mxGeometry x="1790" y="1020" width="80" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="L1" value="Backend Storage Node" style="rounded=1;fillColor=#FDECEA;strokeColor=#E74C3C;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="1055" width="360" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="L2" value="Client Compute Node" style="rounded=1;fillColor=#D6EAF8;strokeColor=#2980B9;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="1090" width="360" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="L3" value="WEKA Operator / CSI Resources" style="rounded=1;fillColor=#E8DAEF;strokeColor=#7D3C98;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="1125" width="360" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="L4" value="Kubernetes CRs (WekaCluster / WekaClient / PVC)" style="rounded=1;fillColor=#A9DFBF;strokeColor=#1E8449;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="1160" width="360" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="L5" value="Test Pods (writer + reader, shared PVC)" style="rounded=1;fillColor=#ABEBC6;strokeColor=#27AE60;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="1195" width="360" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="L6" value="OCI Networking (VCN, IGW, NAT, Subnets)" style="rounded=1;fillColor=#D6EAF8;strokeColor=#2E86C1;fontSize=10;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="1230" width="360" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- Title block -->
+        <mxCell id="T0" value="&lt;b&gt;WEKA Axon on Oracle Kubernetes Engine (OKE)&lt;/b&gt;&#xa;WEKA Operator v1.11.0  ·  weka-in-container:5.1.0.605  ·  OKE Enhanced  ·  k8s v1.32"
+          style="text;html=1;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;fillColor=#1A5276;fontColor=#FFFFFF;rounded=1;strokeColor=#1A5276;"
+          vertex="1" parent="1">
+          <mxGeometry x="1790" y="1290" width="390" height="65" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
