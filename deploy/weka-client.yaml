@@ -10,6 +10,12 @@ spec:
   coresNum: 1
   cpuPolicy: dedicated
   cpuRequest: "500m"
+  csiConfig:
+    advanced:
+      nodeTolerations:
+        - key: "weka.io/axon"
+          operator: "Exists"
+          effect: "NoSchedule"
   portRange:
     basePort: 46000
     portRange: 0

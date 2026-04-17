@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Phase 7: Sign Drives (generate sign-drives WekaPolicy manifest)
 #
-# Usage (standalone): ./weka-phase7-sign-drives.sh [-d]
+# Usage (standalone): ./7-weka-sign-drives.sh [-d]
 #   -d   Dry-run: generate YAML manifest but skip kubectl apply.
 set -euo pipefail
 
@@ -21,8 +21,8 @@ phase7_sign_drives() {
 
   log_info "sign-drives WekaPolicy applied. Current status:"
   kubectl get wekapolicy sign-all-drives-policy \
-    -n default \
-    --kubeconfig="${KUBECONFIG_FILE}" 2>/dev/null || true
+    -n weka-operator-system \
+    2>/dev/null || true
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
@@ -37,8 +37,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   done
 
   load_config
-  check_prerequisites
   PHASES_TO_RUN=(7)
+  check_prerequisites
   validate_vars
   phase7_sign_drives
 fi

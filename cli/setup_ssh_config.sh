@@ -24,7 +24,7 @@ DEPLOY_DIR="${SCRIPT_DIR}/../deploy"
 # ── Defaults ──────────────────────────────────────────────────────────────────
 NAME=""
 SSH_USER="opc"
-IDENTITY_FILE=${SSH_PUBLIC_KEY_PATH}
+IDENTITY_FILE=${SSH_PRIV_KEY_PATH}
 
 # ── Argument parsing ──────────────────────────────────────────────────────────
 print_usage() {

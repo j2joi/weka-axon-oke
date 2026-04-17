@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Phase 9: Deploy WekaClient CR
 #
-# Usage (standalone): ./weka-phase9-weka-client.sh [-d]
+# Usage (standalone): ./9-weka-client.sh [-d]
 #   -d   Dry-run: generate YAML manifest but skip kubectl apply.
 set -euo pipefail
 
@@ -46,19 +46,19 @@ phase9_weka_client() {
   log_info "WekaClient status:"
   kubectl get wekaclient cluster-clients \
     -n default \
-    --kubeconfig="${KUBECONFIG_FILE}" 2>/dev/null || true
+    2>/dev/null || true
 
   log_info "WEKA client pods:"
   kubectl get pods -n default \
-    --kubeconfig="${KUBECONFIG_FILE}" 2>/dev/null || true
+    2>/dev/null || true
 
   log_info "Deployment complete."
   echo ""
   echo "  To monitor WEKA pods:"
-  echo "    kubectl get pods -n default --kubeconfig=${KUBECONFIG_FILE} -w"
+  echo "    kubectl get pods -n default -w"
   echo ""
   echo "  To check operator logs:"
-  echo "    kubectl logs -n weka-operator-system deploy/weka-operator --kubeconfig=${KUBECONFIG_FILE}"
+  echo "    kubectl logs -n weka-operator-system deploy/weka-operator"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
@@ -73,8 +73,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   done
 
   load_config
-  check_prerequisites
   PHASES_TO_RUN=(9)
+  check_prerequisites
   validate_vars
   phase9_weka_client
 fi

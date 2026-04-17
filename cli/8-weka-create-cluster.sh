@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Phase 8: Deploy WekaCluster CR
 #
-# Usage (standalone): ./weka-phase8-create-cluster.sh [-d]
+# Usage (standalone): ./8-weka-create-cluster.sh [-d]
 #   -d   Dry-run: generate YAML manifest but skip kubectl apply.
 set -euo pipefail
 
@@ -65,19 +65,19 @@ wait_for_wekacluster() {
     status=$(kubectl get wekacluster "${name}" \
       -n "${namespace}" \
       -o jsonpath='{.status.status}' \
-      --kubeconfig="${KUBECONFIG_FILE}" 2>/dev/null || echo "unknown")
+      2>/dev/null || echo "unknown")
 
     log_info "[${elapsed}s] status=${status}"
 
     case "${status}" in
       Ready)
         log_info "WekaCluster '${name}' is ready."
-        kubectl get wekacluster "${name}" -n "${namespace}" --kubeconfig="${KUBECONFIG_FILE}"
+        kubectl get wekacluster "${name}" -n "${namespace}"
         return 0
         ;;
       Error|Failed)
         log_error "WekaCluster '${name}' entered error state: ${status}"
-        kubectl get wekacluster "${name}" -n "${namespace}" -o jsonpath='{.status.conditions}' --kubeconfig="${KUBECONFIG_FILE}" | python3 -m json.tool || true
+        kubectl get wekacluster "${name}" -n "${namespace}" -o jsonpath='{.status.conditions}' | python3 -m json.tool || true
         return 1
         ;;
     esac
@@ -87,7 +87,7 @@ wait_for_wekacluster() {
   done
 
   log_error "Timeout: WekaCluster '${name}' not ready after ${timeout}s."
-  kubectl get wekacluster "${name}" -n "${namespace}" --kubeconfig="${KUBECONFIG_FILE}" || true
+  kubectl get wekacluster "${name}" -n "${namespace}" || true
   return 1
 }
 
@@ -103,8 +103,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   done
 
   load_config
-  check_prerequisites
   PHASES_TO_RUN=(8)
+  check_prerequisites
   validate_vars
   phase8_create_cluster
 fi

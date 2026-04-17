@@ -15,7 +15,6 @@ DEPLOY_DIR="${PROJECT_ROOT}/deploy"
 : "${CORES_NUM:=4}"
 : "${BASE_PORT:=46000}"
 : "${TF_WORKSPACE:=dev}"
-: "${KUBECONFIG_FILE:=${DEPLOY_DIR}/kubeconfig}"
 : "${TEARDOWN_TIMEOUT:=120s}"
 : "${CSI_WEKAFS_NAMESPACE:=csi-wekafs}"
 : "${DRY_RUN:=false}"
@@ -42,9 +41,21 @@ load_config() {
 }
 
 # ── Prerequisite check ─────────────────────────────────────────────────────────
+# Requires PHASES_TO_RUN to be set before calling.
+# terraform is only needed for phases 1 (apply) and 2 (output).
 check_prerequisites() {
   local missing=()
-  for tool in terraform kubectl helm jq; do
+  local tools=(kubectl helm)
+
+  local p
+  for p in "${PHASES_TO_RUN[@]}"; do
+    if [[ "${p}" == "1" || "${p}" == "2" ]]; then
+      tools+=(terraform)
+      break
+    fi
+  done
+
+  for tool in "${tools[@]}"; do
     if ! command -v "${tool}" &>/dev/null; then
       missing+=("${tool}")
     fi
@@ -54,7 +65,7 @@ check_prerequisites() {
     log_error "Install them and retry."
     exit 1
   fi
-  log_info "Prerequisites OK: terraform kubectl helm jq"
+  log_info "Prerequisites OK: ${tools[*]}"
 }
 
 # ── OCI config file parser ─────────────────────────────────────────────────────
@@ -159,7 +170,7 @@ kubectl_apply() {
   if [[ "${DRY_RUN}" == "true" ]]; then
     log_info "[DRY-RUN] Skipping kubectl apply. Manifest written to: ${manifest}"
   else
-    kubectl apply -f "${manifest}" --kubeconfig="${KUBECONFIG_FILE}"
+    kubectl apply -f "${manifest}"
   fi
 }
 

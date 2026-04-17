@@ -24,29 +24,30 @@ phase2_kubeconfig() {
     exit 1
   fi
 
-  echo "${kubeconfig_content}" > "${KUBECONFIG_FILE}"
-  chmod 600 "${KUBECONFIG_FILE}"
-  export KUBECONFIG="${KUBECONFIG_FILE}"
+  local kubeconfig_path="${DEPLOY_DIR}/kubeconfig"
+  echo "${kubeconfig_content}" > "${kubeconfig_path}"
+  chmod 600 "${kubeconfig_path}"
+  export KUBECONFIG="${kubeconfig_path}"
 
   log_info "Verifying cluster connectivity..."
-  kubectl cluster-info --kubeconfig="${KUBECONFIG_FILE}"
+  kubectl cluster-info
 
-  echo "export KUBECONFIG=${KUBECONFIG_FILE}" > "${DEPLOY_DIR}/env.sh"
+  echo "export KUBECONFIG=${kubeconfig_path}" > "${DEPLOY_DIR}/env.sh"
 
-  log_info "Kubeconfig saved to: ${KUBECONFIG_FILE}"
+  log_info "Kubeconfig saved to: ${kubeconfig_path}"
   cd "${PROJECT_ROOT}"
 
   echo ""
-  echo "  ┌─ To skip --kubeconfig on every kubectl call, choose one option:"
+  echo "  ┌─ To use kubectl without --kubeconfig on every call, choose one option:"
   echo "  │"
   echo "  │  Option A — source into current shell (no copy-paste needed):"
   echo "  │    source ${DEPLOY_DIR}/env.sh"
   echo "  │"
   echo "  │  Option A — or set it inline right now:"
-  echo "  │    export KUBECONFIG=${KUBECONFIG_FILE}"
+  echo "  │    export KUBECONFIG=${kubeconfig_path}"
   echo "  │"
   echo "  │  Option B — merge permanently into ~/.kube/config:"
-  echo "  │    KUBECONFIG=~/.kube/config:${KUBECONFIG_FILE} kubectl config view --flatten > /tmp/merged && mv /tmp/merged ~/.kube/config"
+  echo "  │    KUBECONFIG=~/.kube/config:${kubeconfig_path} kubectl config view --flatten > /tmp/merged && mv /tmp/merged ~/.kube/config"
   echo "  │    kubectl config use-context weka-param-tf"
   echo "  └──────────────────────────────────────────────────────────────────"
   echo ""
@@ -55,8 +56,8 @@ phase2_kubeconfig() {
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   trap 'log_error "Script failed at line ${LINENO}. Exit code: $?"' ERR
   load_config
-  check_prerequisites
   PHASES_TO_RUN=(2)
+  check_prerequisites
   validate_vars
   phase2_kubeconfig
 fi

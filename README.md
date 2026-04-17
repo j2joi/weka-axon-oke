@@ -130,8 +130,7 @@ cp terraform/terraform.tfvars.example terraform/terraform.tfvars
 | Ubuntu Jammy | `ubuntu_managed_nodes = true`, `ubuntu_release = "jammy"` |
 | Custom image OCID | `image_id = "ocid1.image.oc1.."` |
 
-> **Note:** VM flex shapes are only compatible with Oracle Linux OKE images.
-> Bare metal shapes support both Oracle Linux and Ubuntu.
+> **Note:** Bare metal shapes support both Oracle Linux and Ubuntu.
 
 **Optional overrides** (defaults shown):
 
@@ -277,7 +276,7 @@ inline (`csi.installationEnabled=true`). Waits for the
 `weka-operator-controller-manager` deployment to be fully ready.
 
 ```bash
-cli/weka-phase6-helm-operator.sh
+cli/6-weka-operator.sh
 ```
 
 ---
@@ -308,10 +307,10 @@ spec:
 ```
 
 ```bash
-cli/weka-phase7-sign-drives.sh
+cli/7-weka-sign-drives.sh
 
 # Dry-run — apply manifest without kubectl apply:
-cli/weka-phase7-sign-drives.sh -d
+cli/7-weka-sign-drives.sh -d
 ```
 
 ---
@@ -349,7 +348,7 @@ spec:
 ```
 
 ```bash
-cli/weka-phase8-create-cluster.sh
+cli/8-weka-create-cluster.sh
 ```
 
 Monitor cluster formation:
@@ -389,7 +388,7 @@ spec:
 ```
 
 ```bash
-cli/weka-phase9-weka-client.sh
+cli/9-weka-client.sh
 ```
 
 ---
@@ -400,7 +399,7 @@ Retrieves the admin username and password from the cluster secret and prints
 the WEKA management UI URLs.
 
 ```bash
-cli/weka-phase12-get-credentials.sh
+cli/10-weka-get-credentials.sh
 ```
 
 Output example:
@@ -428,10 +427,10 @@ If no matching pod is found the script prints the current pod list and exits.
 
 ```bash
 # Auto-select the first Running client pod:
-cli/weka-phase13-mount-wekafs.sh
+cli/12-mount-wekafs.sh
 
 # Or target a specific pod:
-cli/weka-phase13-mount-wekafs.sh <pod-name>
+cli/12-mount-wekafs.sh <pod-name>
 ```
 
 ---
@@ -451,7 +450,7 @@ Prepare the following manifests before running:
 | `deploy/test/weka-client-reader.yaml` | Pod that reads from the PVC |
 
 ```bash
-cli/weka-phase14-test-storage.sh
+cli/13-test-storage-on-app-pods.sh
 ```
 
 Sequence:

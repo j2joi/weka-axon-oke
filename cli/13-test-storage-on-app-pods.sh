@@ -10,7 +10,6 @@ phase14_test_storage() {
   log_phase 14 "Apply StorageClass, PVC, and test writer/reader pods"
 
   local namespace="default"
-  local kc="--kubeconfig=${KUBECONFIG_FILE}"
 
   local storageclass_manifest="${DEPLOY_DIR}/storageclass.yaml"
   local pvc_manifest="${DEPLOY_DIR}/test/pvc.yaml"
@@ -29,40 +28,37 @@ phase14_test_storage() {
 
   # ── StorageClass (cluster-scoped) ─────────────────────────────────────────────
   log_info "Applying StorageClass: ${storageclass_manifest}"
-  kubectl apply -f "${storageclass_manifest}" ${kc}
+  kubectl apply -f "${storageclass_manifest}"
 
   # ── PVC ───────────────────────────────────────────────────────────────────────
   log_info "Applying PVC: ${pvc_manifest}"
-  kubectl apply -f "${pvc_manifest}" --namespace="${namespace}" ${kc}
+  kubectl apply -f "${pvc_manifest}" --namespace="${namespace}"
 
-    # ── Writer pod ────────────────────────────────────────────────────────────────
+  # ── Writer pod ────────────────────────────────────────────────────────────────
   log_info "Applying writer pod: ${writer_manifest}"
   local writer_resource
   writer_resource=$(kubectl apply -f "${writer_manifest}" \
     --namespace="${namespace}" \
-    --output=name \
-    ${kc})
+    --output=name)
   log_info "Created: ${writer_resource}"
 
-  log_info "Waiting for writer pod to be Ready (timeout: 60s)..."
+  log_info "Waiting for writer pod to be Ready (timeout: 120s)..."
   kubectl wait "${writer_resource}" \
     --namespace="${namespace}" \
     --for=condition=Ready \
-    --timeout=120s \
-    ${kc}
- # ── PVC Ready ? ───────────────────────────────────────────────────────────────────────
+    --timeout=120s
+
+  # ── PVC Ready ? ───────────────────────────────────────────────────────────────
   log_info "Waiting for PVC pvc-wekafs-dir to be Bound (timeout: 60s)..."
   kubectl wait pvc/pvc-wekafs-dir \
     --namespace="${namespace}" \
     --for=jsonpath='{.status.phase}'=Bound \
-    --timeout=60s \
-    ${kc}
+    --timeout=60s
 
   local pvc_phase
   pvc_phase=$(kubectl get pvc pvc-wekafs-dir \
     --namespace="${namespace}" \
-    -o jsonpath='{.status.phase}' \
-    ${kc})
+    -o jsonpath='{.status.phase}')
   log_info "PVC status: ${pvc_phase}"
 
   # ── Reader pod ────────────────────────────────────────────────────────────────
@@ -70,25 +66,23 @@ phase14_test_storage() {
   local reader_resource
   reader_resource=$(kubectl apply -f "${reader_manifest}" \
     --namespace="${namespace}" \
-    --output=name \
-    ${kc})
+    --output=name)
   log_info "Created: ${reader_resource}"
 
   log_info "Waiting for reader pod to be Ready (timeout: 60s)..."
   kubectl wait "${reader_resource}" \
     --namespace="${namespace}" \
     --for=condition=Ready \
-    --timeout=60s \
-    ${kc}
+    --timeout=60s
 
   log_info "Storage test complete. Writer and reader pods are Ready."
   echo ""
   kubectl get pvc,pods \
     --namespace="${namespace}" \
-    ${kc} | grep -E "NAME|pvc-wekafs-dir|$(basename "${writer_resource}")|$(basename "${reader_resource}")"
+    | grep -E "NAME|pvc-wekafs-dir|$(basename "${writer_resource}")|$(basename "${reader_resource}")"
   echo ""
 
-  # ── Confirm Mounted and Shared ────────────────────────────────────────────────────────────────
+  # ── Confirm Mounted and Shared ────────────────────────────────────────────────
   echo ""
   echo "Test Results:"
   echo ""
@@ -97,14 +91,13 @@ phase14_test_storage() {
   echo ""
   echo "Reader:"
   kubectl logs weka-oke-app-reader --namespace="${namespace}" 2>/dev/null || echo "  (not ready yet)"
-
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   trap 'log_error "Script failed at line ${LINENO}. Exit code: $?"' ERR
   load_config
-  check_prerequisites
   PHASES_TO_RUN=(14)
+  check_prerequisites
   validate_vars
   phase14_test_storage
 fi

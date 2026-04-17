@@ -1,0 +1,16 @@
+apiVersion: weka.weka.io/v1alpha1
+kind: WekaManualOperation
+metadata:
+  name: manual-discover-drives
+  namespace: weka-operator-system
+spec:
+  action: "discover-drives"
+  image: quay.io/weka.io/weka-in-container:5.1.0.605
+  imagePullSecret: "quay-io-robot-secret"
+  payload:
+    discoverDrivesPayload:
+      type: device-paths
+      devicePaths:
+        - "/dev/nvme0n1"
+      nodeSelector:
+        weka.io/supports-backends: "true"

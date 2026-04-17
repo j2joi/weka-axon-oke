@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Phase 13: Mount wekafs filesystem on a client pod
 #
-# Usage (standalone): ./weka-phase13-mount-wekafs.sh [pod-name]
+# Usage (standalone): ./12-mount-wekafs.sh [pod-name]
 #   pod-name   Mount on this specific pod (must be Running).
 #   (no args)  Auto-select the first Running pod labeled weka.io/supports-clients=true.
 set -euo pipefail
@@ -14,7 +14,6 @@ phase13_mount_wekafs() {
   log_phase 13 "Mount wekafs on client pod"
 
   local namespace="default"
-  local kc="--kubeconfig=${KUBECONFIG_FILE}"
   local target_pod=""
 
   # ── Resolve target pod ────────────────────────────────────────────────────────
@@ -25,7 +24,7 @@ phase13_mount_wekafs() {
     phase=$(kubectl get pod "${TARGET_POD}" \
       --namespace="${namespace}" \
       -o jsonpath='{.status.phase}' \
-      ${kc} 2>/dev/null || true)
+      2>/dev/null || true)
 
     if [[ -z "${phase}" ]]; then
       log_error "Pod '${TARGET_POD}' not found in namespace '${namespace}'."
@@ -47,7 +46,7 @@ phase13_mount_wekafs() {
       --selector='weka.io/client-name' \
       --field-selector='status.phase=Running' \
       -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' \
-      ${kc} 2>/dev/null | grep -v '^$' || true)
+      2>/dev/null | grep -v '^$' || true)
 
     if [[ -z "${running_pods}" ]]; then
       log_error "No Running pods with label weka.io/supports-clients=true found in namespace '${namespace}'."
@@ -73,13 +72,11 @@ phase13_mount_wekafs() {
   log_info "Mounting wekafs on pod: ${target_pod}"
   kubectl exec "${target_pod}" \
     --namespace="${namespace}" \
-    ${kc} \
     -- sh -c "mkdir -p /mnt/weka && mount -t wekafs default /mnt/weka/"
 
   log_info "Mount complete. Verifying..."
   kubectl exec "${target_pod}" \
     --namespace="${namespace}" \
-    ${kc} \
     -- sh -c "df -h /mnt/weka"
 }
 
@@ -108,8 +105,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   esac
 
   load_config
-  check_prerequisites
   PHASES_TO_RUN=(13)
+  check_prerequisites
   validate_vars
   phase13_mount_wekafs
 fi

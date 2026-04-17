@@ -11,7 +11,6 @@ phase12_get_credentials() {
 
   local secret="weka-cluster-cluster-dev"
   local namespace="default"
-  local kc="--kubeconfig=${KUBECONFIG_FILE}"
 
   # ── Credentials ───────────────────────────────────────────────────────────────
   log_info "Fetching credentials from secret: ${secret}"
@@ -20,12 +19,12 @@ phase12_get_credentials() {
   username=$(kubectl get "secrets/${secret}" \
     --namespace="${namespace}" \
     --template='{{.data.username}}' \
-    ${kc} | base64_decode)
+    | base64_decode)
 
   password=$(kubectl get "secrets/${secret}" \
     --namespace="${namespace}" \
     --template='{{.data.password}}' \
-    ${kc} | base64_decode)
+    | base64_decode)
 
   echo ""
   echo "  ┌─ WEKA Admin Credentials ────────────────────────────────────────────"
@@ -40,14 +39,14 @@ phase12_get_credentials() {
     --namespace="${namespace}" \
     --field-selector='spec.type=LoadBalancer' \
     -o jsonpath='{.items[*].status.loadBalancer.ingress[0].ip}' \
-    ${kc} 2>/dev/null | xargs)
+    2>/dev/null | xargs)
 
   # ── Worker node external IPs ──────────────────────────────────────────────────
   local node_ips
   node_ips=$(kubectl get nodes \
     --selector='!node-role.kubernetes.io/control-plane,weka.io/supports-backends' \
     -o jsonpath='{range .items[*]}{.status.addresses[?(@.type=="ExternalIP")].address}{"\n"}{end}' \
-    ${kc} 2>/dev/null | grep -v '^$' || true)
+    2>/dev/null | grep -v '^$' || true)
 
   # ── Access instructions ───────────────────────────────────────────────────────
   echo "  ┌─ WEKA UI Access ─────────────────────────────────────────────────────"
@@ -92,8 +91,8 @@ phase12_get_credentials() {
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   trap 'log_error "Script failed at line ${LINENO}. Exit code: $?"' ERR
   load_config
-  check_prerequisites
   PHASES_TO_RUN=(12)
+  check_prerequisites
   validate_vars
   phase12_get_credentials
 fi

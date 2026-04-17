@@ -13,11 +13,6 @@ write_files:
     content: |
       vm.nr_hugepages = 8000
 
-
-# ── 3. HUGETLBFS MOUNT ────────────────────────────────────────────────────────
-mounts:
-  - [ none, /mnt/huge, hugetlbfs, "defaults", "0", "0" ]
-
 # ── 4. OKE INIT + KUBELET CONFIGURATION ──────────────────────────────────────
 runcmd:
   - |

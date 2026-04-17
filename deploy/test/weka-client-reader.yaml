@@ -6,11 +6,11 @@ metadata:
 spec:
   nodeSelector:
     weka.io/supports-clients: "true"
-#  tolerations:
-#    - key: "weka.io/axon"
-#      operator: "Equal"
-#      value: "true"
-#      effect: "NoSchedule"
+  tolerations:
+    - key: "weka.io/axon"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
   containers:
     - name: reader
       image: busybox:1.37.0

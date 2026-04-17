@@ -6,18 +6,34 @@ metadata:
 spec:
   template: dynamic
   dynamicTemplate:
-    computeContainers: 6
-    driveContainers: 6
-    computeCores: 2
-    driveCores: 1
-#    driveCores: 2
-    numDrives: 1
+    computeContainers: 6   #total compute containers in the cluster (max 1 per node)
+    computeCores: 2        #cores per compute container
+    computeHugepages: 6144  #hugepages per compute container (MiB). Required with operator v1.11.0. Formula: computeCores * 3072
+    driveContainers: 6   #total drive containers (max 1 per node)
+    driveCores: 2   #cores per drive container
+    numDrives: 1    #drives per drive container. Required with operator v1.11.0 (set to 1 for full-drives mode)
 #    containerCapacity: 1000
   image: quay.io/weka.io/weka-in-container:5.1.0.605
+  imagePullSecret: "quay-io-robot-secret"
   nodeSelector:
     weka.io/supports-backends: "true"
+  rawTolerations:
+    - key: "weka.io/axon"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+  csiConfig:
+    advanced:
+      nodeTolerations:
+        - key: "weka.io/axon"
+          operator: "Exists"
+          effect: "NoSchedule"
+      controllerTolerations:
+        - key: "weka.io/axon"
+          operator: "Exists"
+          effect: "NoSchedule"
   driversDistService: https://drivers.weka.io
-  imagePullSecret: "quay-io-robot-secret"
+  gracefulDestroyDuration: "0"
   ports:
     basePort: 15000
     portRange: 500

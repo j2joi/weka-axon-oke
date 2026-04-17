@@ -109,7 +109,7 @@ variable "worker_image_type" {
   default     = null
 
   validation {
-    condition     = var.worker_image_type == null || contains(["oke", "platform"], var.worker_image_type)
+    condition     = var.worker_image_type == null || contains(["oke", "platform"], coalesce(var.worker_image_type, ""))
     error_message = "worker_image_type must be 'oke' or 'platform' (use image_id for 'custom')."
   }
 }

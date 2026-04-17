@@ -12,9 +12,7 @@ phase5_namespaces_secrets() {
   log_info "Creating namespace: weka-operator-system"
   kubectl create namespace weka-operator-system \
     --dry-run=client -o yaml \
-    --kubeconfig="${KUBECONFIG_FILE}" \
-  | kubectl apply -f - \
-    --kubeconfig="${KUBECONFIG_FILE}"
+  | kubectl apply -f -
 
   log_info "Creating pull secret in weka-operator-system"
   kubectl create secret docker-registry quay-io-robot-secret \
@@ -24,9 +22,7 @@ phase5_namespaces_secrets() {
     --docker-email="${QUAY_USERNAME}" \
     --namespace=weka-operator-system \
     --dry-run=client -o yaml \
-    --kubeconfig="${KUBECONFIG_FILE}" \
-  | kubectl apply -f - \
-    --kubeconfig="${KUBECONFIG_FILE}"
+  | kubectl apply -f -
 
   log_info "Creating pull secret in default"
   kubectl create secret docker-registry quay-io-robot-secret \
@@ -36,9 +32,7 @@ phase5_namespaces_secrets() {
     --docker-email="${QUAY_USERNAME}" \
     --namespace=default \
     --dry-run=client -o yaml \
-    --kubeconfig="${KUBECONFIG_FILE}" \
-  | kubectl apply -f - \
-    --kubeconfig="${KUBECONFIG_FILE}"
+  | kubectl apply -f -
 
   log_info "Secrets created in weka-operator-system and default namespaces."
 }
@@ -46,8 +40,8 @@ phase5_namespaces_secrets() {
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   trap 'log_error "Script failed at line ${LINENO}. Exit code: $?"' ERR
   load_config
-  check_prerequisites
   PHASES_TO_RUN=(5)
+  check_prerequisites
   validate_vars
   phase5_namespaces_secrets
 fi

@@ -16,26 +16,24 @@ phase6_helm_operator() {
     --version "${WEKA_OPERATOR_VERSION}" \
     --set imagePullSecret=quay-io-robot-secret \
     --set csi.installationEnabled=true \
-    --kubeconfig "${KUBECONFIG_FILE}" \
+    -f deploy/operator-helm-values.yaml \
     --wait \
     --timeout 5m0s
 
   log_info "Waiting for weka-operator deployment to be ready..."
   kubectl rollout status deployment/weka-operator-controller-manager \
     -n weka-operator-system \
-    --timeout=300s \
-    --kubeconfig="${KUBECONFIG_FILE}"
+    --timeout=300s
 
   log_info "WEKA operator is running."
-  kubectl get pods -n weka-operator-system \
-    --kubeconfig="${KUBECONFIG_FILE}"
+  kubectl get pods -n weka-operator-system
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   trap 'log_error "Script failed at line ${LINENO}. Exit code: $?"' ERR
   load_config
-  check_prerequisites
   PHASES_TO_RUN=(6)
+  check_prerequisites
   validate_vars
   phase6_helm_operator
 fi

@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Equivalent of the cloud-init steps in terraform/user-data/managed_OL_OKE.yaml
+# Run manually on an Oracle Linux 8 OKE worker node (requires root).
+#
+#   sudo bash cloud-init.cmd
+set -euo pipefail
+
+LOGFILE="/var/log/oke-node-init.log"
+exec >> "$LOGFILE" 2>&1
+
+echo "[$(date -u +%FT%TZ)] Starting OKE node initialisation"
+
+# ── 1. HUGEPAGES PERSISTENCE ──────────────────────────────────────────────────
+# Equivalent of cloud-init write_files: /etc/sysctl.d/99-hugepages.conf
+cat > /etc/sysctl.d/99-hugepages.conf << 'EOF'
+vm.nr_hugepages = 8000
+EOF
+chmod 0644 /etc/sysctl.d/99-hugepages.conf
+echo "Wrote /etc/sysctl.d/99-hugepages.conf"
+
+# ── 2. APPLY SYSCTL DROP-INS (hugepages) ─────────────────────────────────────
+sysctl --system
+
+# ── 3. PATCH KUBELET CONFIG ───────────────────────────────────────────────────
+# Resolve kubelet config path — process-first, then known fallbacks
+FALLBACK_PATHS=(
+  "/var/lib/kubelet/oke_kubelet_conf.json"
+  "/etc/kubernetes/kubelet/kubelet-config.json"
+  "/etc/kubernetes/kubelet-config.json"
+)
+
+CONFIG_PATH=$(ps -ef | grep '[k]ubelet' | grep -oP '(?<=--config=)\S+' || true)
+
+if [[ -n "$CONFIG_PATH" ]]; then
+  echo "Resolved kubelet config from process args: $CONFIG_PATH"
+  if [[ ! -f "$CONFIG_PATH" ]]; then
+    echo "ERROR: kubelet process reported --config=$CONFIG_PATH but file not found"
+    exit 1
+  fi
+else
+  echo "kubelet not running or --config flag not found in process args, trying fallback paths"
+  for path in "${FALLBACK_PATHS[@]}"; do
+    if [[ -f "$path" ]]; then
+      CONFIG_PATH="$path"
+      echo "Found kubelet config at fallback path: $CONFIG_PATH"
+      break
+    fi
+  done
+  if [[ -z "$CONFIG_PATH" ]]; then
+    echo "ERROR: kubelet config not found in process args or any known fallback path"
+    exit 1
+  fi
+fi
+
+DESIRED_CPU="1"
+DESIRED_POLICY="static"
+
+CURRENT_CPU=$(jq -r '.systemReserved.cpu // empty' "$CONFIG_PATH")
+CURRENT_POLICY=$(jq -r '.cpuManagerPolicy // empty' "$CONFIG_PATH")
+
+if [[ "$CURRENT_CPU" != "$DESIRED_CPU" || "$CURRENT_POLICY" != "$DESIRED_POLICY" ]]; then
+  echo "Patching kubelet config (cpu: '$CURRENT_CPU'->'$DESIRED_CPU', policy: '$CURRENT_POLICY'->'$DESIRED_POLICY')"
+
+  systemctl stop kubelet
+
+  # Stale state file causes kubelet to refuse start after a policy change.
+  rm -f /var/lib/kubelet/cpu_manager_state
+  echo "Cleared cpu_manager_state"
+
+  # Atomic write: write to tmp then mv to avoid a corrupt config on failure.
+  jq \
+    --arg cpu    "$DESIRED_CPU" \
+    --arg policy "$DESIRED_POLICY" \
+    '.systemReserved.cpu = $cpu | .cpuManagerPolicy = $policy' \
+    "$CONFIG_PATH" > "${CONFIG_PATH}.tmp" \
+    && mv "${CONFIG_PATH}.tmp" "$CONFIG_PATH"
+  echo "kubelet config patched"
+
+  systemctl start kubelet
+  echo "kubelet restarted"
+else
+  echo "kubelet config already correct — skipping restart"
+fi
+
+echo "[$(date -u +%FT%TZ)] OKE node init complete"

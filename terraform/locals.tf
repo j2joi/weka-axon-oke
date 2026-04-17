@@ -48,12 +48,12 @@ locals {
       disable_default_cloud_init = false,
       disable_block_volume       = true,
       allow_autoscaler           = false, # Required if no privileges to create dynamic groups
-      cloud_init = [
-        {
-          content      = base64encode(file("./user-data/managed_OL_OKE.yaml")),
-          content_type = "text/cloud-config",
-        },
-      ]
+      # cloud_init = [
+      #   {
+      #     content      = base64encode(file("./user-data/managed_OL_OKE.yaml")),
+      #     content_type = "text/cloud-config",
+      #   },
+      # ]
     },
   } : {}
   managed_nodes = var.ubuntu_managed_nodes ? {
@@ -129,10 +129,13 @@ locals {
     var.worker_image_os
   )
 
-  # Guard: ubuntu_release must be "jammy" or "noble" when ubuntu_managed_nodes = true
+  # Guard: ubuntu_release must be "jammy" or "noble" when ubuntu_managed_nodes = true.
+  # Skipped when image_id is explicitly provided — ubuntu_release is irrelevant in that case.
   _validate_ubuntu_release = (
-    var.ubuntu_managed_nodes && !contains(["jammy", "noble"], var.ubuntu_release)
-    ? tobool("ERROR: ubuntu_release variable must be 'jammy' or 'noble' when ubuntu_managed_nodes = true")
+    var.ubuntu_managed_nodes &&
+    (var.image_id == null || var.image_id == "") &&
+    !contains(["jammy", "noble"], var.ubuntu_release)
+    ? tobool("ERROR: ubuntu_release must be 'jammy' or 'noble' when ubuntu_managed_nodes = true and no image_id is set")
     : true
   )
 
